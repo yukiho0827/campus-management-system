@@ -1,0 +1,143 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+
+    <title>场所码</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'plugins/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css' %}">
+    <style>
+
+        #box {
+            width: 700px;
+            height: 700px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            box-shadow: 5px 5px 20px #aaa;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 100px;
+            padding: 20px 40px;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        @media screen and (min-device-width: 1px) and (max-device-width: 992px) {
+            #box {
+                width: 90%;
+                height: 100%;
+                margin-top: 500px;
+                font-size: 36px;
+            }
+
+            #box>.progress   {
+                height: 30px;
+            }
+
+            #box>div>div {
+                font-size: 20px;
+                line-height: 30px;
+            }
+
+        }
+    </style>
+</head>
+<body>
+
+<div id="box">
+    <h2 class="title">异常信息登记入口</h2>
+    <h3 class="title">{{ place }}</h3>
+    <div class="progress" style="margin-top: 20px;">
+        <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="25"
+             aria-valuemin="0"
+             aria-valuemax="100" style="width: 50%;height: 100%;">1.填写个人信息
+            <span class="sr-only">50% Complete (success)</span>
+        </div>
+{#        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="25"#}
+{#             aria-valuemin="0"#}
+{#             aria-valuemax="100" style="width: 25%;height: 100%;">2.上传核酸检测证明#}
+{#            <span class="sr-only">50% Complete (success)</span>#}
+{#        </div>#}
+{#        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="25"#}
+{#             aria-valuemin="0"#}
+{#             aria-valuemax="100" style="width: 25%;height: 100%;">3.上传健康码#}
+{#            <span class="sr-only">50% Complete (success)</span>#}
+{#        </div>#}
+        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="25"
+             aria-valuemin="0"
+             aria-valuemax="100" style="width: 50%;height: 100%;">2.核验信息
+            <span class="sr-only">50% Complete (success)</span>
+        </div>
+    </div>
+
+    <!--表单-->
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label>姓名</label>
+            {{ form.name }}
+            <span style="color:red;"> {{ form.name.errors.0 }}</span>
+        </div>
+        <div class="form-group">
+            <label>学号</label>
+            {{ form.stu_number }}
+            <span style="color:red;">{{ form.stu_number.errors.0 }}</span>
+        </div>
+        <div class="form-group">
+            <label>手机号</label>
+            {{ form.phone_number }}
+            <span style="color:red;">{{ form.phone_number.errors.0 }}</span>
+        </div>
+        <div class="form-group">
+            <label>体温</label>
+            {{ form.temp }}
+            <span style="color:red;">{{ form.temp.errors.0 }}</span>
+        </div>
+        <div class="form-group">
+            <label>时间</label>
+            <input type="text" name="create_time" class="form-control" placeholder="时间" required id="id_create_time"
+                   value="{{ time }}">
+            <span style="color:red;"></span>
+        </div>
+        <div class="alert alert-warning" role="alert">登记完成后,再次访问时会自动填充数据</div>
+        <div style="height: 36px;">
+            <button type="submit" class="btn btn-default" style="background: #0d3349;color: white;margin: auto">下一步
+            </button>
+        </div>
+
+    </form>
+    <!--表单-->
+</div>
+
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+<script>
+    $(function () {
+        {#inputTime();#}
+        {#time_plugins();#}
+    })
+
+    function time_plugins() {
+        $('#id_create_time').datetimepicker({
+            minView: 'month',
+            format: 'yyyy-mm-dd HH:MM:SS',
+            startDate: '0',
+            language: 'zh-CN',
+            autoclose: true
+        })
+    }
+
+    function inputTime() {
+        $("#id_create_time").value = "{{ time }}";
+    }
+
+</script>
+</body>
+</html>
+

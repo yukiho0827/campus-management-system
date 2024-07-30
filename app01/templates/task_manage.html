@@ -1,0 +1,294 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %}
+    任务管理
+{% endblock %}
+{% block editMedia %}
+    <style>
+        @media screen and (min-device-width: 1px) and (max-device-width: 992px) {
+            .contentContainer {
+                width: auto;
+                font-size: 30px;
+
+            }
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container contentContainer">
+        <div style="margin-bottom: 10px">
+            <!--两种方式-->
+            <input id="btnShow" type="button" value="新建任务" class="btn btn-primary">
+            <button class="btn btn-success" data-toggle="modal" data-target="#myModal">聊天室</button>
+            <!-- 聊天室框 -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">聊天室</h4>
+                        </div>
+                        <div class="modal-body" id="room" style="overflow-y: auto;width: 590px;height: 300px">
+
+                        </div>
+                        <div class="modal-footer">
+                            <input id="txt" type="text" class="col-xs-9" placeholder="请输入"
+                                   style="float: left;margin-top: 5px">
+                            <button type="button" class="btn btn-primary" id="send">发送</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="close">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 新建任务框 -->
+            <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">新建任务</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!--内容-->
+                            <form class="form-group" id="formAdd" method="post" novalidate>
+                                <div class="clearfix">
+                                    {% for field in form %}
+                                        {% if forloop.last %}
+                                            <div class="col-xs-12">
+                                                <div class="form-group" style="position: relative;margin-bottom: 20px;">
+                                                    <label>{{ field.label }}</label>
+                                                    {{ field }}
+
+                                                    <span class="error-msg"
+                                                          style="color: red;position: absolute"></span>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="col-xs-6">
+                                                <div class="form-group" style="position: relative;margin-bottom: 20px;">
+                                                    <label>{{ field.label }}</label>
+                                                    {{ field }}
+
+                                                    <span class="error-msg"
+                                                          style="color: red;position: absolute"></span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                    {% endfor %}
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" id="btnAdd" class="btn btn-primary">提 交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel"><span id="content1"></span></h4>
+                        </div>
+                        <div class="modal-body">
+                            <!--内容-->
+
+                            <div id="content2"></div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--分页搜索-->
+            <div style="float: right;width: 280px">
+                <form method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name='data'
+                               placeholder="任务搜索" value="{{ search_data }}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">搜索</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                任务列表
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>标题</th>
+                    <th>级别</th>
+                    <th>发起人</th>
+                    <th>发起时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for obj in user_list %}
+                    <tr>
+                        <td>{{ obj.id }}</td>
+                        <td>{{ obj.title }}</td>
+                        <td>{{ obj.get_level_display }}</td>
+                        <td>{{ obj.user.user }}</td>
+                        <td>{{ obj.create_time }}</td>
+                        <td>
+                            <input id="n{{ obj.id }}" type="button" value="查看正文" class="btn btn-primary btn-sm">
+                            {#                            <a href="/task/{{ obj.id }}/watch" class="btn btn-primary btn-xs" id="btnWatch">查看正文</a>#}
+                            {#                            <a href="/task/{{ obj.id }}/delete" class="btn btn-danger btn-xs"#}
+                            {#                               style="font-size:16px;background-color: grey;border: grey">删除</a>#}
+                            <input id="n{{ obj.id }}" type="button" value="删除" class="btn btn-primary btn-sm"
+                                   style="background-color: grey;">
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="container" style="text-align: center;">
+            <ul class="pagination" style="margin: 0 auto">
+                {{ page_list_string }}
+            </ul>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成之后代码自动执行
+            bindBtnAddEvent();
+            bindBtnShowEvent();
+            sendMessage();
+            close();
+            {% for obj in user_list %}
+                bindBtnWatch{{ obj.id }}Event();
+            {% endfor %}
+        })
+        {% for obj in user_list %}
+            function bindBtnWatch{{ obj.id }}Event() {
+
+                $("#n{{ obj.id }}").click(function () {
+                    $("#myModal2").modal('show');
+                    $.ajax({
+                        url: '/task/{{ obj.id }}/watch',
+                        type: "post",
+                        dataType: "JSON",
+                        success: function (res) {
+                            console.log("123")
+                            document.getElementById("content1").innerHTML = res.cont1
+                            document.getElementById("content2").innerHTML = res.cont2
+                        }
+                    })
+
+                })
+
+            }
+        {% endfor %}
+
+        function bindBtnShowEvent() {
+            $("#btnShow").click(function () {
+                $("#myModal1").modal('show');
+            })
+        }
+
+        function bindBtnAddEvent() {
+            $("#btnAdd").click(function () {
+                $(".error-msg").empty();
+                $.ajax({
+
+                    url: '/task/add',
+                    type: "post",
+                    data: $("#formAdd").serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            const url = "/task/manage/" + res.code;
+                            window.location.replace(url);
+                            {#location.reload();#}
+                        } else {
+                            $.each(res.error, function (name, data) {
+                                $("#id_" + name).next().text(data[0])
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+        socket = new WebSocket("ws:localhost:8000/room/{{ room_num }}")
+
+        // 握手后自动触发
+        socket.onopen = function (event) {
+
+            let tag = document.createElement("div")
+            tag.id = 'time'
+            tag.className = "alert alert-success"
+            tag.innerText = '当前时间：{{ time }}'
+            document.getElementById('room').appendChild(tag)
+        }
+
+        // websocket接收到服务端发来的消息时，自动触发函数，event中有数据 event.data可获得
+        socket.onmessage = function (event) {
+            let tag = document.createElement("div")
+            tag.style = 'white-space:pre;margin-bottom:5px'
+            let lst = event.data.split("|")
+            $("#time").text("当前时间：" + lst[1])
+            tag.innerText = lst[0] + "         于" + lst[1] + "\n" + lst[2]
+            document.getElementById('room').appendChild(tag)
+        }
+        socket.onclose = function (event) {
+
+        }
+
+        function close() {
+            $("#close").click(function () {
+                socket.close()
+            })
+        }
+
+        function sendMessage() {
+            $("#send").click(function () {
+                var cont = $("#txt")
+                socket.send(cont.val() + "|" + '{{ request.session.info.user }} ')
+                cont.val('')
+            })
+        }
+    </script>
+    <script>
+        $(
+            function () {
+                $('#id_create_time').datetimepicker({
+                    minView: 'month',
+                    format: 'yyyy-mm-dd',
+                    startDate: '0',
+                    language: 'zh-CN',
+                    autoclose: true
+                })
+            }
+        )
+    </script>
+    <script src="{% static 'plugins/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet"
+          href="{% static 'plugins/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}

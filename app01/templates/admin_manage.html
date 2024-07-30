@@ -1,0 +1,134 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}
+    后台管理
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 10px">
+            <!--两种方式-->
+            <input id="btnShow" type="button" value="新建管理员" class="btn btn-primary">
+            <!-- Modal -->
+            <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">新建管理员</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!--内容-->
+                            <form class="form-group" id="formAdd" method="post" novalidate>
+                                <div class="clearfix">
+                                    {% for field in form %}
+                                        <div class="col-xs-12">
+                                            <div class="form-group" style="position: relative;margin-bottom: 20px;">
+                                                <label>{{ field.label }}</label>
+                                                {{ field }}
+                                                <span class="error-msg" style="color: red;position: absolute"></span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" id="btnAdd" class="btn btn-primary">提 交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--分页搜索-->
+            <div style="float: right;width: 280px">
+                <form method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name='data'
+                               placeholder="任务搜索" value="{{ search_data }}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">搜索</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                管理员列表
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    <th>密码</th>
+                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for obj in user_list %}
+                    <tr>
+                        <td>{{ obj.id }}</td>
+
+                        <td>{{ obj.user }}</td>
+                        <td><a href="/admin/{{ obj.id }}/edit" class="btn btn-primary btn-xs">编辑</a></td>
+                        <td>********</td>
+                        <td><a href="/admin/{{ obj.id }}/reset" class="btn btn-primary btn-xs">重置</a></td>
+                        <td><a href="/admin/{{ obj.id }}/delete" class="btn btn-danger btn-xs">删除</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="container" style="text-align: center;">
+            <ul class="pagination" style="margin: 0 auto">
+                {{ page_list_string }}
+            </ul>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成之后代码自动执行
+            bindBtnAddEvent();
+            bindBtnShowEvent();
+        })
+
+        function bindBtnShowEvent() {
+            $("#btnShow").click(function () {
+                $("#myModal1").modal('show');
+            })
+        }
+
+        function bindBtnAddEvent() {
+            $("#btnAdd").click(function () {
+                $(".error-msg").empty();
+                $.ajax({
+                    url: '/admin/add',
+                    type: "post",
+                    data: $("#formAdd").serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            const url = "/admin/manage/" + res.code;
+                            window.location.replace(url);
+                        } else {
+                            $.each(res.error, function (name, data) {
+                                $("#id_" + name).next().text(data[0])
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+    </script>
+{% endblock %}

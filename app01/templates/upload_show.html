@@ -1,0 +1,110 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %}
+    抽检记录
+{% endblock %}
+{% block editMedia %}
+    <style>
+        @media screen and (min-device-width: 1px) and (max-device-width: 992px) {
+            .contentContainer {
+                width: auto;
+                font-size: 38px;
+
+            }
+
+            .modal-dialog {
+                width: auto;
+
+                margin: 30px 30px;
+
+            }
+
+            .modal-content {
+                height: 100%;
+            }
+        }
+
+    </style>
+
+{% endblock %}
+{% block content %}
+    <div class="container contentContainer">
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                机器人随机抽检记录
+            </div>
+            <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel"><span id="content1"></span></h4>
+                        </div>
+                        <div class="modal-body">
+                            <!--内容-->
+
+
+                            <div id="content2"></div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>时间</th>
+                    <th>体温情况</th>
+                    <th>人像</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for obj in user_list %}
+                    <tr>
+                        <td>{{ obj.id }}</td>
+                        <td>{{ obj.create_time|date:'Y-m-d H:i:s' }}</td>
+                        <td>{{ obj.res }}</td>
+                        <td><input id="n{{ obj.id }}" type="button" value="查看图片" class="btn btn-primary btn-sm"></td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="container" style="text-align: center;">
+            <ul class="pagination" style="margin: 0 auto">
+                {{ page_list_string }}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成之后代码自动执行
+            {% for obj in user_list %}
+                bindBtnWatch{{ obj.id }}Event();
+            {% endfor %}
+        })
+        {% for obj in user_list %}
+            function bindBtnWatch{{ obj.id }}Event() {
+
+                $("#n{{ obj.id }}").click(function () {
+                    $("#myModal2").modal('show');
+                    document.getElementById("content1").innerHTML = "{{ obj.id }}号人像"
+
+                    $("#content2").empty().append("<img src='../static/{{ obj.photo }}' alt=''>")
+
+                })
+
+            }
+        {% endfor %}
+    </script>
+{% endblock %}

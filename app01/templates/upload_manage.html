@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+
+{% block title %}
+    文件上传
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="data">
+
+            <input type="submit" value="提交" id="end">
+            <span id="res"></span>
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成之后代码自动执行
+            ret();
+        })
+        function ret(){
+
+            $("#end").click(
+                function (){
+                    var tag = document.getElementById("res")
+                    tag.innerText = "提交成功"
+                }
+            )
+        }
+    </script>
+{% endblock %}

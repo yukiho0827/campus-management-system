@@ -1,0 +1,96 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+
+{% block title %}
+    拍照
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="data" type="file" accept="image/*" capture="camera">
+
+            <input type="submit" value="提交" id="end">
+            <span id="res"></span>
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成之后代码自动执行
+            ret();
+        })
+
+        function ret() {
+
+            $("#end").click(
+                function () {
+                    var tag = document.getElementById("res")
+                    tag.innerText = "提交成功"
+                }
+            )
+        }
+
+        {#//选择图片后自动填充#}
+        {#//获取对象input file 的图片地址，放进img#}
+        {#$("#file").change(function () {//input的id#}
+        {#    var objUrl = getObjectURL(this.files[0]);//调用函数调取图片地址#}
+        {#    var fileTag = document.getElementById("file")#}
+        {##}
+        {#    obUrl = objUrl;#}
+        {#    console.log("objUrl = " + objUrl);#}
+        {#    if (objUrl) {#}
+        {#        $("#pic").attr("src", objUrl).show();//选择img的ID，给src赋值#}
+        {#        $("#file").attr("value",objUrl)#}
+        {#    }#}
+        {#})
+            ;
+            #}
+            {##}
+            {#//获取input file的文件地址#}
+            {#function getObjectURL(file) {#}
+            {#    var url = null;#}
+            {#    if (window.createObjectURL != undefined) {//basic#}
+            {#        url = window.createObjectURL(file);#}
+            {#    } else if (window.URL != undefined) {//mozilla(firefox)兼容火狐#}
+            {#        url = window.URL.createObjectURL(file);#}
+            {#    } else if (window.webkitURL != undefined) {//webkit or chrome#}
+            {#        url = window.webkitURL.createObjectURL(file);#}
+            {#    }#}
+            {#    return url;#}
+            {
+        #}#}
+    </script>
+{% endblock %}
+
+
+
+{#{% block js %}#}
+{#    <script type="text/javascript">#}
+{#        var video = document.getElementById('video');#}
+{#        // 得到摄像头api#}
+{#        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {#}
+{#            // 如果我们想要立即显示拍照，请设置 { video: true }#}
+{#            navigator.mediaDevices.getUserMedia({video: true}).then(#}
+{#                function (stream) {#}
+{#                    video.srcObject = stream;#}
+{#                    video.play();#}
+{#                });#}
+{#        }#}
+{##}
+{#        // 用于拍摄快照的元素,添加canvas里面#}
+{#        var canvas = document.getElementById('canvas');#}
+{#        var context = canvas.getContext('2d');#}
+{#        var video = document.getElementById('video');#}
+{#        // 触发的照片#}
+{#        document.getElementById("snap").addEventListener("click", function () {#}
+{#            context.drawImage(video, 0, 0, 640, 480);#}
+{#        });#}
+{#    </script>#}
+{##}
+{#{% endblock %}#}

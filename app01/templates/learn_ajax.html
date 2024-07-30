@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% load static %}
+<!-- title content css js -->
+{% block title %}
+    学习ajax
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form method="post" id="formAdd" onsubmit="return false;">
+            {% csrf_token %}
+            <p><input type="text" name="data1" class="form-group"> + <input type="text" name="data2" class="form-group"> = <input type="text" id="total"></p>
+            <p><input type="submit" id="btnAdd" class="btn btn-primary"></p>
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成之后代码自动执行
+            bindBtnAddEvent();
+        })
+
+        function bindBtnAddEvent() {
+            $("#btnAdd").click(function () {
+                $.ajax({
+                    url: '/learn/ajax',
+                    type: "post",
+                    data: $("#formAdd").serialize(),
+                    dataType: "JSON",
+                    success: function (args) {
+                        if (args.status) {
+
+                            $("#total").val(args.total)
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}
